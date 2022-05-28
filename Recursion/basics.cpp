@@ -78,3 +78,110 @@ void dfs(int idx, int sum, int target, vector<int>& candidates, vector<int>& pat
         path.pop_back();
     }
 }
+//46. Permutations: (all integers are unique)
+//Given an array nums of distinct integers, return all the possible permutations.
+//APPROACH 1: With visited array
+void backtrack(vector<int>& nums, vector<vector<int>>& ans, vector<int>& path, vector<bool>& vis) {
+    if (path.size() == nums.size()) {
+        ans.push_back(path);
+        return;
+    }
+    for (int i = 0;i < nums.size();i++) {
+        if (!vis[i]) {
+            path.push_back(nums[i]);
+            vis[i] = true;
+            backtrack(nums, ans, path, vis);
+            path.pop_back();
+            vis[i] = false;
+        }
+    }
+}
+//APPROACH 2: By swapping original array
+void perNew(int idx, vi& arr, vvi& ans) {
+    if (idx == arr.size()) {
+        ans.pb(arr);
+        return;
+    }
+    for (int i = idx;i < arr.size();i++) {
+        swap(arr[idx], arr[i]);
+        perNew(idx + 1, arr, ans);
+        swap(arr[idx], arr[i]);
+    }
+}
+
+//47. Permutations II (contains duplicates)
+//All possible unique permutations in any order.
+//APPROACH: make freq map and use it for generating permutation
+void backtrack(vector<int>& nums, vector<vector<int>>& ans, vector<int>& path, unordered_map<int, int>& um) {
+    if (path.size() == nums.size()) {
+        ans.push_back(path);
+        return;
+    }
+    for (auto& it : um) {
+        int num = it.first;
+        int count = it.second;
+        if (count == 0) continue;
+        path.push_back(num);
+        it.second -= 1;
+        backtrack(nums, ans, path, um);
+        path.pop_back();
+        it.second = count;
+    }
+}
+
+//51. N-Queens 
+// The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+// Given an integer n, return all distinct solutions to the n-queens puzzle. You may return the answer in any order.
+
+//APPROACH: Try all combinations , it is very much like pick and not pick approach, in this, we pick
+// (i,j) cell and check if it is possible to put queen on that cell or not
+//To check if it good cell, one way is to check both diagonally and axially. but another approach is
+//like using visted array and we make it by taking benefit of symmetry.
+//we don't need to check in all eigth direction , just in direction in which we have previously visited
+// a particular 45deg diagonal can be identified if it passes through(row,col) cell by(row+col) 
+// a particular 135deg diagonal can be identified if it passes through(row,col) cell by (n-1+col-row) 
+// vector<int> flag_col(n,1),flag_45(2*n-1,1),flag_135(2*n-1,1);
+void solve(int row, vector<vector<string>>& ans, vector<string>& grid, int n,
+    vector<int>flag_col, vector<int>flag_45, vector<int>flag_135)
+{
+    if (row == n) { ans.push_back(grid); return; }
+
+    for (int col = 0;col < n;i++) {
+        if (flag_col[col] && flag_45[row + col] && flag_135[n - 1 + col - row]) { // if good cell
+            flag_col[col] = flag_45[row + col] = flag_135[n - 1 + col - row] = 0; // mark visited
+            grid[row][col] = 'Q';
+            solve(row + 1, ans, grid, n, flag_cal, flag_45, flag135);
+            flag_col[col] = flag_45[row + col] = flag_135[n - 1 + col - row] = 1; // mark unvisited while backtracking
+            grid[row][col] = '.';
+        }
+    }
+}
+//APPROACH:(LESS OPTIMISATION) checking in all three direction
+void solve(std::vector<std::vector<std::string> >& res, std::vector<std::string>& nQueens, int row, int& n) {
+    if (row == n) {
+        res.push_back(nQueens);
+        return;
+    }
+    for (int col = 0; col != n; ++col)
+        if (isValid(nQueens, row, col, n)) {
+            nQueens[row][col] = 'Q';
+            solveNQueens(res, nQueens, row + 1, n);
+            nQueens[row][col] = '.';
+        }
+}
+bool isValid(std::vector<std::string>& nQueens, int row, int col, int& n) {
+    //check if the column had a queen before.
+    for (int i = 0; i != row; ++i)
+        if (nQueens[i][col] == 'Q')
+            return false;
+    //check if the 45° diagonal had a queen before.
+    for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; --i, --j)
+        if (nQueens[i][j] == 'Q')
+            return false;
+    //check if the 135° diagonal had a queen before.
+    for (int i = row - 1, j = col + 1; i >= 0 && j < n; --i, ++j)
+        if (nQueens[i][j] == 'Q')
+            return false;
+    return true;
+}
+
