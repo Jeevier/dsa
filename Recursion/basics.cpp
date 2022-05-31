@@ -146,11 +146,11 @@ void solve(int row, vector<vector<string>>& ans, vector<string>& grid, int n,
 {
     if (row == n) { ans.push_back(grid); return; }
 
-    for (int col = 0;col < n;i++) {
+    for (int col = 0;col < n;col++) {
         if (flag_col[col] && flag_45[row + col] && flag_135[n - 1 + col - row]) { // if good cell
             flag_col[col] = flag_45[row + col] = flag_135[n - 1 + col - row] = 0; // mark visited
             grid[row][col] = 'Q';
-            solve(row + 1, ans, grid, n, flag_cal, flag_45, flag135);
+            solve(row + 1, ans, grid, n, flag_col, flag_45, flag_135);
             flag_col[col] = flag_45[row + col] = flag_135[n - 1 + col - row] = 1; // mark unvisited while backtracking
             grid[row][col] = '.';
         }
@@ -165,7 +165,7 @@ void solve(std::vector<std::vector<std::string> >& res, std::vector<std::string>
     for (int col = 0; col != n; ++col)
         if (isValid(nQueens, row, col, n)) {
             nQueens[row][col] = 'Q';
-            solveNQueens(res, nQueens, row + 1, n);
+            solve(res, nQueens, row + 1, n);
             nQueens[row][col] = '.';
         }
 }
