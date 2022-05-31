@@ -60,3 +60,4 @@ int divide(int A, int B) {
             res += 1 << x, a -= b << x;
     return (A > 0) == (B > 0) ? res : -res;
 }
+
